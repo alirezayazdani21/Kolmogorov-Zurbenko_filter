@@ -1,0 +1,53 @@
+#Exploring the Kolmogorov-Zurbenko Time Series Filter
+###########################################
+library(quantmod)
+library(kza)
+###########################################
+#Example1: SP500
+getSymbols("SP500", src = 'FRED')
+
+KZ_SP500<-SP500
+for (m in seq(25,200,50)){
+  for (k in seq(2,100,2^5)){
+    
+    kz_f<-kz(SP500,m,k)
+    colnames(kz_f)<-paste("KZ_Filter_m",m,"_k",k)
+    KZ_SP500<-cbind(KZ_SP500,kz_f)
+  }
+}
+
+plot(KZ_SP500$SP500,lwd=2,main = "SP500")
+lines(KZ_SP500[,-1],col = 3:20,lwd=1.2)
+
+######################################
+######################################
+#Example2: USD EURO rate
+getSymbols("DEXUSEU", src = 'FRED',from = '2005-12-31')
+
+KZ_USDEUR<-DEXUSEU
+for (m in seq(25,200,50)){
+  for (k in seq(2,100,2^5)){
+    
+    kz_f<-kz(DEXUSEU,m,k)
+    colnames(kz_f)<-paste0("KZ_Filter_m",m,"_k",k)
+    KZ_USDEUR<-cbind(KZ_USDEUR,kz_f)
+  }
+}
+
+plot(KZ_USDEUR$DEXUSEU,lwd=2,main = "USDEUR")
+lines(KZ_USDEUR[,-1],col = 4:20,lwd=1.5)
+######################################
+######################################
+#Example3: USD AUD rate
+getSymbols("DEXCAUS", src = 'FRED',from = '2005-12-31')
+
+KZ_USDAUD<-DEXCAUS
+for (m in seq(25,200,50)){for (k in seq(2,100,2^5)){
+    kz_f<-kz(DEXCAUS,m,k);colnames(kz_f)<-paste0("KZ_Filter_m",m,"_k",k);KZ_USDAUD<-cbind(KZ_USDAUD,kz_f)
+  }
+}
+
+plot(KZ_USDAUD[,1],lwd=3,main = "");lines(KZ_USDAUD[,-1],col = 5:20,lwd=1.5)
+######################################
+
+#dygraph(KZ_USDEUR) %>% dyRangeSelector() %>% dyOptions(strokeWidth = 1.2,colors=c("red","blue"))
